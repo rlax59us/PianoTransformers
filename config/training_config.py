@@ -1,5 +1,3 @@
-from transformers import TrainingArguments
-
 class training_config:
     train_batch_size=16
     eval_batch_size=12
