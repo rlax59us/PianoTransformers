@@ -28,6 +28,6 @@ $ python train.py
 $ python generate.py
 ```
 ## Results
-Generated results are located in gen_res folder.
+Generated results are located in the gen_res folder.
 
-You can choose sample what you satisfy among the great number of results.
+You can choose to sample what you satisfy among the great number of results.
