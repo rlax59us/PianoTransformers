@@ -4,7 +4,7 @@ Simple implementation of Piano Music Generation with GPT2 using Midi Tokenizatio
 (Will continue to study, analyze, improve, and update!)
 
 ## Background
-GPT models are a type of Neural Network that consists of a couple of decoder blocks.
+GPT models are a type of Neural Network that consists of a few decoder blocks.
 
 We used [MAESTRO dataset](https://magenta.tensorflow.org/datasets/maestro) which is consist of about 200 hours of piano music.
 
