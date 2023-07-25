@@ -47,7 +47,11 @@ if __name__ == "__main__":
     # Creates model
     state_dict = torch.load('cpt/Vanillar/1000.ckpt')
     
-    model = Transformer(vanilla_model_config).eval()
+    # Creates model
+    if args.model_name == 'GPT':
+        model = GPT(gpt_model_config).to(device)
+    elif args.model_name == 'Vanillar':
+        model = Transformer(vanilla_model_config).to(device)
     model.load_state_dict(state_dict, strict=True)
     model.to(device)
 
