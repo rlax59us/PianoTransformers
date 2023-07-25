@@ -1,10 +1,10 @@
-# PianoGPT
-Simple implementation of Piano Music Generation with GPT2 using Midi Tokenization.
+# PianoTransformers
+Simple implementation of Piano Music Generation with several Transformer(Vanilla, GPT, T5) architectures using Midi Tokenization.
 
 (Will continue to study, analyze, improve, and update!)
 
 ## Background
-GPT models are a type of Neural Network that consists of a few decoder blocks.
+GPT models are a type of Neural Network that consists of a couple of decoder blocks.
 
 We used [MAESTRO dataset](https://magenta.tensorflow.org/datasets/maestro) which is consist of about 200 hours of piano music.
 
@@ -28,6 +28,6 @@ $ python train.py
 $ python generate.py
 ```
 ## Results
-Generated results are located in the gen_res folder.
+Generated results are located in gen_res folder.
 
-You can choose to sample what you satisfy among the great number of results.
+You can choose sample what you satisfy among the great number of results.

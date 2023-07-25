@@ -4,16 +4,26 @@ from torch.optim import AdamW
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from torchtoolkit.data import create_subsets
 
-from models.gpt2 import GPT
+from models.gpt.gpt2 import GPT
 from data.dataloader import MIDIDataset
 from config.training_config import training_config
-from config.model_config import model_config
+from config.model_config import gpt_model_config
 from itertools import cycle
 from tqdm import tqdm
 import wandb
 import os
+import argparse
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
+
+def parse_arguments():
+    """Parse and return the command line arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data_dir', default='/home/taehyeon/data/MAESTRO_dataset', help="Directory to Dataset.")
+    parser.add_argument('--model_name', default='GPT', help="Model type.")
+    parser.add_argument('--cpt_dir', default='cpt/', help="Path to the checkpoint files.")
+    args = parser.parse_args()
+    return args
 
 def validating(model, validloader):
     model.eval()
@@ -63,13 +73,15 @@ def training(model, trainloader, validloader, optimizer, scheduler, cpt_path="cp
     wandb.finish()
 
 if __name__ == "__main__":
-    dataset = MIDIDataset()
+    args = parse_arguments()
+    dataset = MIDIDataset(root_dir=args.data_dir)
     subset_train, subset_valid = create_subsets(dataset, [0.3])
     train_loader = DataLoader(subset_train, batch_size=training_config.train_batch_size, shuffle=True, pin_memory=True, num_workers=4)
     valid_loader = DataLoader(subset_valid, batch_size=training_config.eval_batch_size, shuffle=False, pin_memory=True, num_workers=4)
 
     # Creates model
-    model = GPT(model_config).to(device)
+    if args.model_name == 'GPT':
+        model = GPT(gpt_model_config).to(device)
     optimizer = AdamW(model.parameters(), lr=training_config.learning_rate, weight_decay=training_config.weight_decay)
     scheduler = CosineAnnealingWarmRestarts(optimizer=optimizer, T_0=100, T_mult=1, eta_min=1e-5)
 
@@ -77,5 +89,6 @@ if __name__ == "__main__":
              trainloader=train_loader, 
              validloader=valid_loader, 
              optimizer=optimizer,
-             scheduler=scheduler
+             scheduler=scheduler,
+             cpt_path=args.cpt_dir
              )

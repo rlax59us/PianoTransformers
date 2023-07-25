@@ -5,12 +5,22 @@ from torch.utils.data import DataLoader
 from torchtoolkit.data import create_subsets
 from tqdm import tqdm
 
-from models.gpt2 import GPT
+from models.gpt.gpt2 import GPT
 from data.dataloader import MIDIDataset
-from config.model_config import model_config
+from config.model_config import gpt_model_config
 from data.utils import decode_midi
+import argparse
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
+
+def parse_arguments():
+    """Parse and return the command line arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data_dir', default='/home/taehyeon/data/MAESTRO_dataset', help="Directory to Dataset.")
+    parser.add_argument('--model_name', default='GPT', help="Model type.")
+    parser.add_argument('--cpt_dir', default='cpt/', help="Path to the checkpoint files.")
+    args = parser.parse_args()
+    return args
 
 def generate(model, dataloader_test):
     (gen_results_path := Path('gen_res')).mkdir(parents=True, exist_ok=True)
@@ -28,14 +38,15 @@ def generate(model, dataloader_test):
                 count += 1
     
 if __name__ == "__main__":  
-    dataset = MIDIDataset()
+    args = parse_arguments()
+    dataset = MIDIDataset(root_dir=args.data_dir)
     subset_train, subset_valid = create_subsets(dataset, [0.3])
     valid_loader = DataLoader(subset_valid, batch_size=1, shuffle=False, pin_memory=True, num_workers=4)
     
     # Creates model
     state_dict = torch.load('cpt/20000.ckpt')
     
-    model = GPT(model_config).eval()
+    model = GPT(gpt_model_config).eval()
     model.load_state_dict(state_dict, strict=True)
     model.to(device)
 
