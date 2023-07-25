@@ -1,7 +1,5 @@
 import torch
 import torch.nn as nn
-import math
-from torch.nn import functional as F
 
 class GPTBlock(nn.Module):
     def __init__(self, config):
@@ -39,7 +37,7 @@ class Multi_Head_Attention(nn.Module):
         attention = torch.softmax(score, dim=1)
         
         mask = self.masked_attn_mask(len=score.size(2))
-        score = score.masked_fill(mask[:,:,:score.size(2),:score.size(2)], float('-inf'))
+        attention = attention.masked_fill(mask[:,:,:score.size(2),:score.size(2)], float('-inf'))
 
         x = torch.matmul(self.attn_drop(attention), V)
 
