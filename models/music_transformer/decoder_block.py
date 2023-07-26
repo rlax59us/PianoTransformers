@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-class GPTBlock(nn.Module):
+class MusicTransformerBlock(nn.Module):
     def __init__(self, config):
         super().__init__()
         self.ln1 = nn.LayerNorm(config.n_embd)
@@ -34,12 +34,12 @@ class Multi_Head_Attention(nn.Module):
     #Scale Dot-Product Attention
     def Scaled_Dot_Product_Attn(self, Q, K, V):
         score = torch.matmul(Q, K.permute(0, 1, 3, 2)) / self.scale
+        attention = torch.softmax(score, dim=1)
         
         mask = self.masked_attn_mask(len=score.size(2))
-        score = score.masked_fill(mask[:,:,:score.size(2),:score.size(2)], float('-inf'))
-        score = torch.softmax(score, dim=-1)
+        attention = attention.masked_fill(mask[:,:,:score.size(2),:score.size(2)], float('-inf'))
 
-        x = torch.matmul(self.attn_drop(score), V)
+        x = torch.matmul(self.attn_drop(attention), V)
 
         return x
             
