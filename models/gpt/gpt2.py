@@ -19,7 +19,8 @@ class GPT(nn.Module):
         self.pos_emb = nn.Parameter(torch.zeros(1, config.n_positions, config.n_embd))
         self.drop = nn.Dropout(config.embd_pdrop)
         # transformer
-        self.blocks = nn.Sequential(*[GPTBlock(config) for _ in range(config.n_layer)])
+        self.masked_block = GPTBlock(config)
+        self.blocks = nn.Sequential(*[GPTBlock(config) for _ in range(config.n_layer - 1)])
         # decoder head
         self.layer_norm = nn.LayerNorm(config.n_embd)
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
@@ -29,6 +30,7 @@ class GPT(nn.Module):
         # forward the GPT model
         embeddings = self.tok_emb(input_ids) + self.pos_emb[:, :input_ids.size(-1), :]
         x = self.drop(embeddings)
+        x = self.masked_block(x, mask=True)
         x = self.blocks(x)
         x = self.layer_norm(x)
         logits = self.lm_head(x)

@@ -45,12 +45,14 @@ class Multi_Head_Attention(nn.Module):
 	#Scale Dot-Product Attention
 	def Scaled_Dot_Product_Attn(self, Q, K, V, mask=False):
 		score = torch.matmul(Q, K.permute(0, 1, 3, 2)) / self.scale
-		attention = torch.softmax(score, dim=1)
+        
 		if mask:
 			mask = self.masked_attn_mask(len=score.size(2))
-			attention = attention.masked_fill(mask[:,:,:score.size(2),:score.size(2)], float('-inf'))
+			score = score.masked_fill(mask[:,:,:score.size(2),:score.size(2)], float('-inf'))
+		
+		score = torch.softmax(score, dim=-1)
 
-		x = torch.matmul(self.attn_drop(attention), V)
+		x = torch.matmul(self.attn_drop(score), V)
 
 		return x
 				
@@ -83,7 +85,7 @@ class Multi_Head_Attention(nn.Module):
 		
 	def masked_attn_mask(self, len):
 		ones = torch.ones(len, len)
-		mask = torch.tril(ones).bool().view(1, 1, len, len)
+		mask = torch.triu(ones, diagonal=1).bool().view(1, 1, len, len)
 		return mask.to('cuda')
     
 #Feed Forward Layer
@@ -108,7 +110,6 @@ class EncoderLayer(nn.Module):
 		super().__init__()
 
 		self.self_attention = Multi_Head_Attention(config)
-		#self.self_attention = RelativePositionBasedAttention(config)
 		self.layer_norm1 = nn.LayerNorm(config.dim_model)
 		self.feed_forward = Feed_Forward(config.dim_model, config.dim_hidden, config.d_prob)
 		self.layer_norm2 = nn.LayerNorm(config.dim_model)
@@ -153,10 +154,8 @@ class DecoderLayer(nn.Module):
 		super().__init__()
 
 		self.self_attention = Multi_Head_Attention(config)
-		#self.self_attention = RelativePositionBasedAttention(config)
 		self.layer_norm1 = nn.LayerNorm(config.dim_model)
 		self.cross_attention = Multi_Head_Attention(config)
-		#self.cross_attention = RelativePositionBasedAttention(config)
 		self.layer_norm2 = nn.LayerNorm(config.dim_model)
 		self.feed_forward = Feed_Forward(config.dim_model, config.dim_hidden, config.d_prob)
 		self.layer_norm3 = nn.LayerNorm(config.dim_model)

@@ -9,8 +9,8 @@ class GPTBlock(nn.Module):
         self.attn = Multi_Head_Attention(config)
         self.mlp = Feedforward(config)
 
-    def forward(self, x):
-        x = x + self.attn(self.ln1(x))
+    def forward(self, x, mask=False):
+        x = x + self.attn(self.ln1(x), mask)
         x = x + self.mlp(self.ln2(x))
         
         return x
@@ -32,11 +32,12 @@ class Multi_Head_Attention(nn.Module):
         self.scale = torch.sqrt(torch.Tensor([self.head_dim])).to('cuda')
 
     #Scale Dot-Product Attention
-    def Scaled_Dot_Product_Attn(self, Q, K, V):
+    def Scaled_Dot_Product_Attn(self, Q, K, V, mask):
         score = torch.matmul(Q, K.permute(0, 1, 3, 2)) / self.scale
         
-        mask = self.masked_attn_mask(len=score.size(2))
-        score = score.masked_fill(mask[:,:,:score.size(2),:score.size(2)], float('-inf'))
+        if mask:
+            mask = self.masked_attn_mask(len=score.size(2))
+            score = score.masked_fill(mask[:,:,:score.size(2),:score.size(2)], float('-inf'))
         score = torch.softmax(score, dim=-1)
 
         x = torch.matmul(self.attn_drop(score), V)
@@ -54,7 +55,7 @@ class Multi_Head_Attention(nn.Module):
         
         return x
                 
-    def forward(self, x):
+    def forward(self, x, mask=False):
         shape = x.size()
         Q = self.fc_q(x)
         K = self.fc_k(x)
@@ -62,7 +63,7 @@ class Multi_Head_Attention(nn.Module):
 
         Q, K, V = map(lambda arr: self.split_heads(arr, shape), [Q, K, V])
         
-        x = self.Scaled_Dot_Product_Attn(Q, K, V)
+        x = self.Scaled_Dot_Product_Attn(Q, K, V, mask)
 
         x = self.merge_heads(x, shape=shape)
         x = self.resid_drop(self.fc_o(x))
@@ -71,7 +72,7 @@ class Multi_Head_Attention(nn.Module):
     
     def masked_attn_mask(self, len):
         ones = torch.ones(len, len)
-        mask = torch.tril(ones).bool().view(1, 1, len, len)
+        mask = torch.triu(ones, diagonal=1).bool().view(1, 1, len, len)
         return mask.to('cuda')
 
 class Feedforward(nn.Module):
