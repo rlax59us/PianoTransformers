@@ -35,7 +35,6 @@ def validating(model, validloader):
         input_ids = batch['input_ids'].to(device)
         labels = batch['labels'].to(device)
         logits, loss = model.forward(input_ids=input_ids, labels=labels)
-        time.sleep(0.01)
         valid_loss += loss.item()
     valid_loss /= N
 
@@ -54,7 +53,6 @@ def training(model, trainloader, validloader, optimizer, scheduler, cpt_path="cp
             labels = batch['labels'].to(device)
 
             logits, loss = model.forward(input_ids=input_ids, labels=labels)
-            time.sleep(0.01)
             loss.backward()
             optimizer.step()
             scheduler.step()
