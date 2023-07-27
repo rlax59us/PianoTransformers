@@ -5,10 +5,11 @@ from torch.utils.data import DataLoader
 from torchtoolkit.data import create_subsets
 from tqdm import tqdm
 
-from models.gpt.gpt2 import GPT
+from models.gpt.gpt import GPT
 from models.vanilla.transformer import Transformer
+from models.music_transformer.music_transformer import MusicTransformer
 from data.dataloader import MIDIDataset
-from config.model_config import gpt_model_config, vanilla_model_config
+from config.model_config import *
 from data.utils import decode_midi
 import argparse
 
@@ -18,7 +19,7 @@ def parse_arguments():
     """Parse and return the command line arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', default='/home/taehyeon/data/MAESTRO_dataset', help="Directory to Dataset.")
-    parser.add_argument('--model_name', default='GPT', help="Model type.")
+    parser.add_argument('--model_name', default='Vanilla', help="Model type.")
     parser.add_argument('--cpt_dir', default='cpt/', help="Path to the checkpoint files.")
     args = parser.parse_args()
     return args
@@ -45,13 +46,15 @@ if __name__ == "__main__":
     valid_loader = DataLoader(subset_valid, batch_size=1, shuffle=False, pin_memory=True, num_workers=4)
     
     # Creates model
-    state_dict = torch.load('cpt/Vanillar/1000.ckpt')
+    state_dict = torch.load('cpt/Vanillar/2500.ckpt')
     
     # Creates model
     if args.model_name == 'GPT':
         model = GPT(gpt_model_config).to(device)
-    elif args.model_name == 'Vanillar':
+    elif args.model_name == 'Vanilla':
         model = Transformer(vanilla_model_config).to(device)
+    elif args.model_name == 'Music':
+        model = MusicTransformer(music_transformer_model_config).to(device)
     model.load_state_dict(state_dict, strict=True)
     model.to(device)
 

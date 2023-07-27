@@ -4,11 +4,12 @@ from torch.optim import AdamW
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from torchtoolkit.data import create_subsets
 
-from models.gpt.gpt2 import GPT
+from models.gpt.gpt import GPT
 from models.vanilla.transformer import Transformer
+from models.music_transformer.music_transformer import MusicTransformer
 from data.dataloader import MIDIDataset
 from config.training_config import training_config
-from config.model_config import gpt_model_config, vanilla_model_config
+from config.model_config import *
 from itertools import cycle
 from tqdm import tqdm
 import wandb
@@ -22,7 +23,7 @@ def parse_arguments():
     """Parse and return the command line arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', default='/home/taehyeon/data/MAESTRO_dataset', help="Directory to Dataset.")
-    parser.add_argument('--model_name', default='Vanilla', help="Model type.")
+    parser.add_argument('--model_name', default='Music', help="Model type.")
     parser.add_argument('--cpt_dir', default='cpt/', help="Path to the checkpoint files.")
     args = parser.parse_args()
     return args
@@ -35,6 +36,7 @@ def validating(model, validloader):
         input_ids = batch['input_ids'].to(device)
         labels = batch['labels'].to(device)
         logits, loss = model.forward(input_ids=input_ids, labels=labels)
+        time.sleep(0.01)
         valid_loss += loss.item()
     valid_loss /= N
 
@@ -53,6 +55,7 @@ def training(model, trainloader, validloader, optimizer, scheduler, cpt_path="cp
             labels = batch['labels'].to(device)
 
             logits, loss = model.forward(input_ids=input_ids, labels=labels)
+            time.sleep(0.01)
             loss.backward()
             optimizer.step()
             scheduler.step()
@@ -86,6 +89,8 @@ if __name__ == "__main__":
         model = GPT(gpt_model_config).to(device)
     elif args.model_name == 'Vanilla':
         model = Transformer(vanilla_model_config).to(device)
+    elif args.model_name == 'Music':
+        model = MusicTransformer(music_transformer_model_config).to(device)
     optimizer = AdamW(model.parameters(), lr=training_config.learning_rate, weight_decay=training_config.weight_decay)
     scheduler = CosineAnnealingWarmRestarts(optimizer=optimizer, T_0=100, T_mult=1, eta_min=1e-5)
 

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from models.music_transformer.decoder_block import MusicTransformerBlock
+from models.music_transformer.sub_layers import MusicTransformerBlock
 from data.constants import *
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
