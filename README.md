@@ -1,14 +1,15 @@
 # PianoTransformers
-Simple implementation of Piano Music Generation with several Transformer(Vanilla, GPT, T5, [Music Transformer](https://arxiv.org/abs/1809.04281), etc. ) architectures using Midi Tokenization.
+Simple implementation of Piano Music Generation with several Transformer architectures using Midi Tokenization.
+
+* Vanilla ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/vanilla))
+* GPT ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/gpt))
+* [Music Transformer](https://arxiv.org/abs/1809.04281) ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/music_transformer))
+* [Museformer](https://arxiv.org/abs/2210.10349) ([code]())
 
 (Will continue to study, analyze, improve, and update!)
 
-## Background
-GPT models are a type of Neural Network that consists of a couple of decoder blocks.
-
+## Data
 We used [MAESTRO dataset](https://magenta.tensorflow.org/datasets/maestro) which is consist of about 200 hours of piano music.
-
-In this practice, by applying GPT2 and tokenization of MIDI format, the Music Generation problem will be considered a token sequence generation and solved.
 
 ## Install 
 By using Anaconda Environment,
