@@ -1,8 +1,8 @@
 # PianoTransformers
 Simple implementation of Piano Music Generation with several Transformer architectures using Midi Tokenization.
 
-* Vanilla ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/vanilla))
-* GPT ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/gpt))
+* [Vanilla](https://arxiv.org/abs/1706.03762) ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/vanilla))
+* [GPT](https://www.cs.ubc.ca/~amuham01/LING530/papers/radford2018improving.pdf) ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/gpt))
 * [Music Transformer](https://arxiv.org/abs/1809.04281) ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/music_transformer))
 * [Museformer](https://arxiv.org/abs/2210.10349) ([code]())
 
