@@ -3,8 +3,8 @@ Simple implementation of Piano Music Generation with several Transformer archite
 
 * [Vanilla](https://arxiv.org/abs/1706.03762) ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/vanilla))
 * [GPT](https://www.cs.ubc.ca/~amuham01/LING530/papers/radford2018improving.pdf) ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/gpt))
-* [Music Transformer](https://arxiv.org/abs/1809.04281) ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/music_transformer))
-* [Museformer](https://arxiv.org/abs/2210.10349) ([code]())
+* [Music Transformer](https://arxiv.org/abs/1809.04281) (Google Brain, 2018) ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/music_transformer))
+* [Museformer](https://arxiv.org/abs/2210.10349) (Microsoft Research, 2022) ([code]())
 
 (Will continue to study, analyze, improve, and update!)
 
