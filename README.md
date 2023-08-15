@@ -1,4 +1,5 @@
 # PianoTransformers
+![primer_0](https://github.com/rlax59us/PianoTransformers/assets/56262962/26705fa5-8377-433f-9439-42a3ad388e08)
 Simple implementation of Piano Music Generation with several Transformer architectures using Midi Tokenization.
 
 * [Vanilla](https://arxiv.org/abs/1706.03762) ([code](https://github.com/rlax59us/PianoTransformers/tree/main/models/vanilla))
@@ -29,6 +30,6 @@ $ python train.py
 $ python generate.py
 ```
 ## Results
-Generated results are located in gen_res folder.
+Generated results will be located in gen_res folder and the Visualized Image will be saved in img folder.
 
 You can choose sample what you satisfy among the great number of results.
