@@ -1,7 +1,6 @@
 import torch
 from torch.utils.data import DataLoader
 from torch.optim import AdamW
-from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
 from torchtoolkit.data import create_subsets
 
 from models.gpt.gpt import GPT
@@ -41,7 +40,7 @@ def validating(model, validloader):
 
     return valid_loss
 
-def training(model, trainloader, validloader, optimizer, scheduler, cpt_path="cpt/"):
+def training(model, trainloader, validloader, optimizer, cpt_path="cpt/"):
     # Training
     wandb.init(
         project="MusicGPT"
@@ -56,21 +55,20 @@ def training(model, trainloader, validloader, optimizer, scheduler, cpt_path="cp
             logits, loss = model.forward(input_ids=input_ids, labels=labels)
             loss.backward()
             optimizer.step()
-            scheduler.step()
 
             tstep.set_postfix(train_loss=loss.item())
             wandb.log({"train_loss": loss})
 
-            if (batch_idx + 1) % (training_config.eval_steps / training_config.train_batch_size) == 0:
+            if (batch_idx + 1) % training_config.eval_steps == 0:
                 valid_loss = validating(model=model, validloader=validloader)
                 tstep.set_postfix(valid_loss=valid_loss)
                 wandb.log({"valid_loss": valid_loss})
                 model.train()
                 if not os.path.exists(cpt_path):
                     os.makedirs(cpt_path)
-                torch.save(model.state_dict(), cpt_path + str((batch_idx+1)*training_config.train_batch_size)+'.ckpt')
+                torch.save(model.state_dict(), cpt_path + str(batch_idx + 1)+'.pt')
 
-            if batch_idx > training_config.max_steps / training_config.train_batch_size:
+            if batch_idx > training_config.max_steps:
                 break
 
     wandb.finish()
@@ -90,12 +88,10 @@ if __name__ == "__main__":
     elif args.model_name == 'Music':
         model = MusicTransformer(music_transformer_model_config).to(device)
     optimizer = AdamW(model.parameters(), lr=training_config.learning_rate, weight_decay=training_config.weight_decay)
-    scheduler = CosineAnnealingWarmRestarts(optimizer=optimizer, T_0=100, T_mult=1, eta_min=1e-5)
 
     training(model=model, 
              trainloader=train_loader, 
              validloader=valid_loader, 
              optimizer=optimizer,
-             scheduler=scheduler,
              cpt_path=args.cpt_dir + args.model_name + '/'
              )

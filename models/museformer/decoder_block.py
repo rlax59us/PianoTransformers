@@ -1,9 +1,12 @@
 import torch
 import torch.nn as nn
 
-class MuseformerBlock(nn.Module):
+class MuseformerDecoderBlock(nn.Module):
     def __init__(self, config):
         super().__init__()
+        self.embed_regular_tokens = nn.Embedding(config.vocab_size, config.n_embd)
+        #self.summary_tokens = nn.Embedding(config., config.n_embd)
+
         self.ln1 = nn.LayerNorm(config.n_embd)
         self.ln2 = nn.LayerNorm(config.n_embd)
         self.attn = Multi_Head_Attention(config)
@@ -16,6 +19,14 @@ class MuseformerBlock(nn.Module):
         return x
 
 class Multi_Head_Attention(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+
+class Fine_Grained_Attention(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+
+class Coarse_Grained_Attention(nn.Module):
     def __init__(self, config):
         super().__init__()
 

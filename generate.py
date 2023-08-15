@@ -19,7 +19,7 @@ def parse_arguments():
     """Parse and return the command line arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', default='/home/taehyeon/data/MAESTRO_dataset', help="Directory to Dataset.")
-    parser.add_argument('--model_name', default='Vanilla', help="Model type.")
+    parser.add_argument('--model_name', default='Music', help="Model type.")
     parser.add_argument('--cpt_dir', default='cpt/', help="Path to the checkpoint files.")
     args = parser.parse_args()
     return args
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     valid_loader = DataLoader(subset_valid, batch_size=1, shuffle=False, pin_memory=True, num_workers=4)
     
     # Creates model
-    state_dict = torch.load('cpt/Vanillar/2500.ckpt')
+    state_dict = torch.load('checkpoint/25000.pt')
     
     # Creates model
     if args.model_name == 'GPT':

@@ -45,7 +45,7 @@ class MusicTransformer(nn.Module):
         gen_tokens = torch.LongTensor([self.pad_token for i in range(target_seq_length-len_primer)]).expand(num_primer, target_seq_length-len_primer)
         gen_tokens = torch.concat((primer.type(torch.long).to(device), gen_tokens.to(device)), dim=-1).to(device)
 
-        i = num_primer
+        i = len_primer
         while (i < target_seq_length):
             logits, _ = self.forward(gen_tokens[..., :i])
             probs = self.softmax(logits)[..., :self.eos_token]
